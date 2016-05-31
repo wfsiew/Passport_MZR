@@ -24,11 +24,6 @@ namespace Validator
 
         public MRZ()
         {
-          
-
-          
-
-            Line = x;
             PassportNum = x.Substring(0, 9);
             CheckDigit1 = x[9];
             Nationality = x.Substring(10, 3);
@@ -167,7 +162,11 @@ namespace Validator
         {
             get
             {
-                return CheckDigit1 
+                bool b = false;
+                if (string.IsNullOrEmpty(PassportNum))
+                    return b;
+
+                b = PassportNum.All(k => char.IsLetterOrDigit(k) || k == '<');
             }
         }
 
