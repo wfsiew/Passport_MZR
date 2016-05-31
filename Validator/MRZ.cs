@@ -9,26 +9,26 @@ namespace Validator
 {
     public class MRZ
     {
+        public string Line { get; set; }
         public string PassportNum { get; set; }
-        public char CheckDigit1 { get; set; }
+        public int CheckDigit1 { get; set; }
         public string Nationality { get; set; }
         public string DOB { get; set; }
-        public char CheckDigit2 { get; set; }
-        public char Sex { get; set; }
+        public int CheckDigit2 { get; set; }
+        public string Sex { get; set; }
         public string PassportExpDate { get; set; }
-        public char CheckDigit3 { get; set; }
+        public int CheckDigit3 { get; set; }
         public string PersonalNum { get; set; }
-        public char CheckDigit4 { get; set; }
-        public char FinalCheckDigit { get; set; }
+        public int CheckDigit4 { get; set; }
+        public int FinalCheckDigit { get; set; }
 
-        public MRZ(string x)
+        public MRZ()
         {
-            if (string.IsNullOrEmpty(x))
-                return;
+          
 
-            if (x.Length != 44)
-                return;
+          
 
+            Line = x;
             PassportNum = x.Substring(0, 9);
             CheckDigit1 = x[9];
             Nationality = x.Substring(10, 3);
@@ -42,22 +42,132 @@ namespace Validator
             FinalCheckDigit = x[43];
         }
 
-        public bool IsValidPassportNum
+        private int GetCheckDigit(string x)
         {
-            get
-            {
-                if (string.IsNullOrEmpty(PassportNum))
-                    return false;
+            int cd = 0;
 
-                return PassportNum.All(Char.IsLetterOrDigit);
+            string ch = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            int[] weight = new int[] { 7, 3, 1 };
+            int sum = 0;
+
+            for (int i = 0, j = 0; i < x.Length; i++)
+            {
+                char c = PassportNum[i];
+                if (char.IsDigit(c))
+                    sum += Convert.ToInt32(c) * weight[j];
+
+                else if (char.IsLetter(c))
+                {
+                    int v = ch.IndexOf(c) + 10;
+                    sum += v * weight[j];
+                }
+
+                if (j == 2)
+                    j = 0;
+
+                else
+                    ++j;
             }
+
+            cd = sum % 10;
+            return cd;
+        }
+
+        public void SetPassportNum(string x)
+        {
+            int n = 9;
+            if (string.IsNullOrEmpty(x))
+                PassportNum = "".PadRight(n, '<');
+
+            else
+                PassportNum = x.ToUpper().PadRight(n, '<');
+
+            CheckDigit1 = GetCheckDigit(PassportNum);
+        }
+
+        public void SetNationality(string x)
+        {
+            int n = 3;
+            if (string.IsNullOrEmpty(x))
+                Nationality = "".PadRight(n, '<');
+
+            else
+                Nationality = x.ToUpper().PadRight(n, '<');
+        }
+
+        public void SetDOB(string x)
+        {
+            if (string.IsNullOrEmpty(x))
+                return;
+
+            if (IsValidateDate(x))
+            {
+                DOB = x;
+                CheckDigit2 = GetCheckDigit(DOB);
+            }
+        }
+
+        public void SetSex(string x)
+        {
+            if (string.IsNullOrEmpty(x))
+                Sex = "<";
+
+            else
+            {
+                string g = x.ToUpper();
+                if (g == "M" || g == "F")
+                    Sex = g;
+
+                else
+                    Sex = "<";
+            }
+        }
+
+        public void SetPassportExpDate(string x)
+        {
+            if (string.IsNullOrEmpty(x))
+                return;
+
+            if (IsValidateDate(x))
+            {
+                PassportExpDate = x;
+                CheckDigit3 = GetCheckDigit(PassportExpDate);
+            }
+        }
+
+        public void SetPersonalNum(string x)
+        {
+            int n = 14;
+            if (string.IsNullOrEmpty(x))
+                PersonalNum = "".PadRight(n, '<');
+
+            else
+                PersonalNum = x.ToUpper().PadRight(n, '<');
+
+            CheckDigit4 = GetCheckDigit(PersonalNum);
+        }
+        
+        public void SetFinalCheckDigit()
+        {
+            FinalCheckDigit = 0;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(PassportNum + CheckDigit1)
+                .Append(DOB + CheckDigit2)
+                .Append(PassportExpDate + CheckDigit3 + PersonalNum + CheckDigit4);
+            string s = sb.ToString();
+
+            if (s.Length != 43)
+                return;
+
+            FinalCheckDigit = GetCheckDigit(s);
         }
 
         public bool IsValidCheckDigit1
         {
             get
             {
-                return Char.IsDigit(CheckDigit1);
+                return CheckDigit1 
             }
         }
 
@@ -68,7 +178,7 @@ namespace Validator
                 if (string.IsNullOrEmpty(Nationality))
                     return false;
 
-                return Nationality.All(Char.IsLetter);
+                return Nationality.All(k => Char.IsLetter(k) || k == '<');
             }
         }
 
@@ -103,7 +213,7 @@ namespace Validator
         {
             get
             {
-                return Char.IsLetter(Sex);
+                return Char.IsLetter(Sex) || Sex == '<';
             }
         }
 
@@ -141,7 +251,7 @@ namespace Validator
                 if (string.IsNullOrEmpty(PersonalNum))
                     return false;
 
-                return PersonalNum.All(Char.IsLetterOrDigit);
+                return PersonalNum.All(k => Char.IsLetterOrDigit(k) || k == '<');
             }
         }
 

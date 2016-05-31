@@ -3,50 +3,61 @@
     ViewBag.Title = "MZR Validate Example";
 }
 
-<div class="jumbotron vertical-center">
+<div class="jumbotron center-div">
     <div class="container text-center" ng-controller="IndexCtrl">
         <div class="row">
-            <form class="form-horizontal" role="form" novalidate>
+            <form class="form-horizontal" role="form" novalidate ng-submit="formsubmit()">
                 <div class="form-group form-group-sm">
-                    <label class="col-xs-3 control-label text-right">Passport No.</label>
+                    <label class="col-xs-4 control-label text-right">Passport No.</label>
                     <div class="col-xs-3">
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" ng-model="model.PassportNum" />
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label class="col-xs-3 control-label text-right">Nationality</label>
+                    <label class="col-xs-4 control-label text-right">Nationality</label>
                     <div class="col-xs-5">
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" ng-model="model.Nationality" />
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label class="col-xs-3 control-label text-right">Date of Birth</label>
+                    <label class="col-xs-4 control-label text-right">Date of Birth</label>
                     <div class="col-xs-1">
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" ng-model="model.DOB.year" />
                     </div>
                     <div class="col-xs-1">
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" ng-model="model.DOB.month" />
                     </div>
                     <div class="col-xs-1">
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" ng-model="model.DOB.day" />
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label class="col-xs-3 control-label text-right">Gender</label>
+                    <label class="col-xs-4 control-label text-right">Gender</label>
                     <div class="col-xs-5">
+                        <input type="text" class="form-control" ng-model="model.Gender" />
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-xs-4 control-label text-right">Date of Expiry</label>
+                    <div class="col-xs-1">
+                        <input type="text" class="form-control" />
+                    </div>
+                    <div class="col-xs-1">
+                        <input type="text" class="form-control" />
+                    </div>
+                    <div class="col-xs-1">
                         <input type="text" class="form-control" />
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label class="col-xs-3 control-label text-right">Date of Expiry</label>
-                    <div class="col-xs-1">
+                    <label class="col-xs-2 text-right">MRZ (Line 2)</label>
+                    <div class="col-xs-9">
                         <input type="text" class="form-control" />
                     </div>
-                    <div class="col-xs-1">
-                        <input type="text" class="form-control" />
-                    </div>
-                    <div class="col-xs-1">
-                        <input type="text" class="form-control" />
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="col-xs-5 col-xs-offset-4">
+                        <button type="submit" class="btn btn-primary">Validate</button>
                     </div>
                 </div>
             </form>
