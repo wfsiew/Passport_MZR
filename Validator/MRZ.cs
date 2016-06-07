@@ -9,7 +9,6 @@ namespace Validator
 {
     public class MRZ
     {
-        public string Line { get; set; }
         public string PassportNum { get; set; }
         public int CheckDigit1 { get; set; }
         public string Nationality { get; set; }
@@ -24,17 +23,19 @@ namespace Validator
 
         public MRZ()
         {
-            PassportNum = x.Substring(0, 9);
-            CheckDigit1 = x[9];
-            Nationality = x.Substring(10, 3);
-            DOB = x.Substring(13, 6);
-            CheckDigit2 = x[19];
-            Sex = x[20];
-            PassportExpDate = x.Substring(21, 6);
-            CheckDigit3 = x[27];
-            PersonalNum = x.Substring(28, 14);
-            CheckDigit4 = x[42];
-            FinalCheckDigit = x[43];
+        }
+
+        public string Line
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(PassportNum).Append(CheckDigit1)
+                    .Append(Nationality).Append(DOB).Append(CheckDigit2)
+                    .Append(Sex).Append(PassportExpDate).Append(CheckDigit3)
+                    .Append(PersonalNum).Append(CheckDigit4).Append(FinalCheckDigit);
+                return sb.ToString();
+            }
         }
 
         private int GetCheckDigit(string x)
@@ -130,7 +131,7 @@ namespace Validator
             }
         }
 
-        public void SetPersonalNum(string x)
+        public void SetPersonalNum(string x="")
         {
             int n = 14;
             if (string.IsNullOrEmpty(x))
@@ -167,6 +168,84 @@ namespace Validator
                     return b;
 
                 b = PassportNum.All(k => char.IsLetterOrDigit(k) || k == '<');
+                return b;
+            }
+        }
+
+        public bool IsValidCheckDigit2
+        {
+            get
+            {
+                bool b = false;
+                if (string.IsNullOrEmpty(DOB))
+                    return b;
+
+                if (!DOB.All(char.IsDigit))
+                    return b;
+
+                b = IsValidateDate(DOB);
+                return b;
+            }
+        }
+
+        public bool IsValidCheckDigit3
+        {
+            get
+            {
+                bool b = false;
+                if (string.IsNullOrEmpty(PassportExpDate))
+                    return b;
+
+                if (!PassportExpDate.All(char.IsDigit))
+                    return b;
+
+                b = IsValidateDate(PassportExpDate);
+                return b;
+            }
+        }
+
+        public bool IsValidCheckDigit4
+        {
+            get
+            {
+                bool b = false;
+                if (string.IsNullOrEmpty(PersonalNum))
+                    return b;
+
+                b = PersonalNum.All(k => char.IsLetterOrDigit(k) || k == '<');
+                return b;
+            }
+        }
+
+        public bool IsValidFinalDigit
+        {
+            get
+            {
+                return FinalCheckDigit != 0;
+            }
+        }
+
+        public bool IsValidSex
+        {
+            get
+            {
+                return Sex == "M" || Sex == "F" || Sex == "<";
+            }
+        }
+
+        public bool IsValidDOB
+        {
+            get
+            {
+                return IsValidCheckDigit2;
+            }
+        }
+
+        public bool IsValidPassportExpDate
+        {
+            get
+            {
+                return IsValidCheckDigit3;
             }
         }
 
@@ -177,96 +256,15 @@ namespace Validator
                 if (string.IsNullOrEmpty(Nationality))
                     return false;
 
-                return Nationality.All(k => Char.IsLetter(k) || k == '<');
+                return Nationality.All(k => char.IsLetter(k) || k == '<');
             }
         }
 
-        public bool IsValidDOB
+        public bool IsValidPassportNum
         {
             get
             {
-                if (string.IsNullOrEmpty(DOB))
-                    return false;
-
-                bool b = true;
-                if (!DOB.All(Char.IsDigit))
-                    return b;
-
-                b = IsValidateDate(DOB);
-                if (!b)
-                    return b;
-
-                return b;
-            }
-        }
-
-        public bool IsValidCheckDigit2
-        {
-            get
-            {
-                return Char.IsDigit(CheckDigit2);
-            }
-        }
-
-        public bool IsValidSex
-        {
-            get
-            {
-                return Char.IsLetter(Sex) || Sex == '<';
-            }
-        }
-
-        public bool IsValidPassportExpDate
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(PassportExpDate))
-                    return false;
-
-                bool b = true;
-                if (!PassportExpDate.All(Char.IsDigit))
-                    return b;
-
-                b = IsValidateDate(PassportExpDate);
-                if (!b)
-                    return b;
-
-                return b;
-            }
-        }
-
-        public bool IsValidCheckDigit3
-        {
-            get
-            {
-                return Char.IsDigit(CheckDigit3);
-            }
-        }
-
-        public bool IsValidPersonalNum
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(PersonalNum))
-                    return false;
-
-                return PersonalNum.All(k => Char.IsLetterOrDigit(k) || k == '<');
-            }
-        }
-
-        public bool IsValidCheckDigit4
-        {
-            get
-            {
-                return Char.IsDigit(CheckDigit4);
-            }
-        }
-
-        public bool IsValidFinalCheckDigit
-        {
-            get
-            {
-                return Char.IsDigit(FinalCheckDigit);
+                return IsValidCheckDigit1;
             }
         }
 
